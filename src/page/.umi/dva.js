@@ -20,7 +20,7 @@ export function _onCreate() {
     app.use(plugin);
   });
   
-  app.model({ namespace: 'planning', ...(require('/Users/yy/Desktop/control_now/f/src/model/planning.js').default) });
+  app.model({ namespace: 'planning', ...(require('/Users/yy/Desktop/manage_now/f/src/model/planning.js').default) });
   return app;
 }
 

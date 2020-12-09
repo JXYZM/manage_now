@@ -21,7 +21,7 @@ const routes = [
   {
     component: () =>
       React.createElement(
-        require('/Users/yy/Desktop/control_now/f/node_modules/_umi-build-dev@1.18.7@umi-build-dev/lib/plugins/404/NotFound.js')
+        require('/Users/yy/Desktop/manage_now/f/node_modules/_umi-build-dev@1.18.7@umi-build-dev/lib/plugins/404/NotFound.js')
           .default,
         { pagesPath: 'src/page', hasRoutesInConfig: true },
       ),

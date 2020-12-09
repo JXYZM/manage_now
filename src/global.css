@@ -21,24 +21,29 @@
 
 .my_map {
   grid-row: 1/13;
-  grid-column: 1/12;
+  grid-column: 9/21;
   padding: 5px 5px 5px 5px;
+  border: 2px solid;
 }
 
-.my_manage {
+.my_input {
   grid-row: 1/21;
-  grid-column: 12/21;
+  grid-column: 1/9;
   padding: 5px 5px 5px 5px;
   overflow: auto;
+  border: 2px solid;
+  margin-right: 10px;
 }
 
-.my_control {
+.my_display {
   grid-row: 13/21;
-  grid-column: 1/12;
+  grid-column: 9/21;
   display: grid;
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(10, 1fr);
   padding: 5px 5px 5px 5px;
+  border: 2px solid;
+  margin-top: 5px;
 }
 
 .my_start {
@@ -54,11 +59,21 @@
   overflow: auto;
 }
 
-.td {
-  text-overflow: unset;
-  white-space: nowrap;
+.ant-row.ant-form-item {
+  margin-bottom: 40px;
 }
 
-.ant-descriptions-view {
+.ant-form-text {
+  text-align: center;
+  width: 100%;
+  padding: 30px;
+  font-size: large;
+}
+
+.ant-table-content {
   overflow: auto;
+}
+
+.ant-table-cell {
+  white-space: nowrap;
 }

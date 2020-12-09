@@ -17,11 +17,22 @@ import {
   Space,
   Input,
   Select,
+  InputNumber,
+  Switch,
+  Slider,
+  Radio,
+  Checkbox,
+  Rate,
+  Upload,
+  message,
+  Table,
 } from 'antd'
 import {
   MinusCircleOutlined,
   PlusOutlined,
   createFromIconfontCN,
+  UploadOutlined,
+  InboxOutlined,
 } from '@ant-design/icons'
 import load_point from '../resources/load_point'
 
@@ -37,6 +48,7 @@ const { TabPane } = Tabs
 const { Header, Content, Footer } = Layout
 const { Panel } = Collapse
 const { Option } = Select
+const { Column, ColumnGroup } = Table
 
 const namespace = 'planning'
 
@@ -44,43 +56,40 @@ const mapStateToProps = ({ [namespace]: n }) => {
   return {
     tInfo: n.todo_list,
     pInfo: n.position,
-    fInfo: n.flight_info,
-    mInfo: n.mission_info,
+    fmInfo: n.flight_mission,
+    ftInfo: n.flight_todolist,
+    // fInfo: n.flight_info,
+    // mInfo: n.mission_info,
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    query_from_host: () => {
+    post_algo_profile: (values) => {
       const action = {
-        type: `${namespace}/query_from_host`,
+        type: `${namespace}/post_algo_profile`,
         payload: {
           type: 0,
+          ...values,
         },
       }
       dispatch(action)
     },
-    post_change_flight: (values) => {
+    plan: () => {
       const action = {
-        type: `${namespace}/post_change_flight`,
+        type: `${namespace}/plan`,
         payload: {
           type: 1,
-          ...values,
-        },
-      }
-      dispatch(action)
-    },
-    post_change_mission: (values) => {
-      const action = {
-        type: `${namespace}/post_change_mission`,
-        payload: {
-          type: 2,
-          ...values,
         },
       }
       dispatch(action)
     },
   }
+}
+
+const formItemLayout = {
+  labelCol: { span: 6, offset: 0 },
+  wrapperCol: { span: 14, offset: 0 },
 }
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -93,15 +102,21 @@ export default class Amap extends Component {
       what: '点击下方按钮开始绘制',
       load_point,
       color: [
-        'black',
-        'brown',
-        'green',
-        'red',
+        'aqua',
         'blue',
-        'yellow',
-        'purple',
-        'orange',
+        'black',
+        'blueviolet',
+        'brown',
+        'burlywood',
+        'chartreuse',
+        'cadetblue',
+        'coral',
+        'crimson',
+        'darkolivegreen',
+        'grey',
       ],
+      button_disabled: true,
+      selectedRowKeys: [],
     }
     this.amapEvents = {
       created: (mapInstance) => {
@@ -159,13 +174,45 @@ export default class Amap extends Component {
     return [temp, temp_path]
   }
 
+  onSelectChange = (selectedRowKeys) => {
+    console.log('selectedRowKeys changed: ', selectedRowKeys)
+    this.setState({ selectedRowKeys })
+  }
+
   render() {
     const [load_uav, path] = this.display()
-    const onChangeFlight = (values) => {
-      this.props.post_change_flight(values)
+
+    const onSave = (values) => {
+      console.log('Received values of form: ', values)
+      this.props.post_algo_profile(values)
+      this.setState({
+        button_disabled: false,
+      })
     }
-    const onChangeMission = (values) => {
-      this.props.post_change_mission(values)
+
+    const uploadChange = (info) => {
+      // console.log('Upload event:', e)
+      // if (Array.isArray(e)) {
+      //   return e
+      // }
+      // return e && e.fileList
+      const { status } = info.file
+
+      console.log(info)
+
+      if (status !== 'uploading') {
+        console.log(info.file, info.fileList)
+      }
+      if (status === 'done') {
+        message.success(`${info.file.name} uploaded successfully.`, 3)
+      } else if (status === 'error') {
+        message.error(`${info.file.name} upload failed.`, 3)
+      }
+    }
+    const { selectedRowKeys } = this.state
+    const rowSelection = {
+      selectedRowKeys,
+      onChange: this.onSelectChange,
     }
 
     return (
@@ -183,7 +230,7 @@ export default class Amap extends Component {
           >
             <div>
               <IconFont0 style={{ padding: '20px' }} type="icon-wurenji-copy" />
-              {`智能管理控制平台`}
+              {`智能规划平台`}
             </div>
           </div>
         </div>
@@ -226,256 +273,113 @@ export default class Amap extends Component {
               ))}
             </Map>
           </div>
-          <div className="my_manage">
-            <Collapse defaultActiveKey={['0', '1']}>
-              <Panel header="无人集群个体信息管理" key="0">
-                <Collapse defaultActiveKey={['0']}>
-                  {this.props.fInfo.map((v) => (
-                    <Panel header={v['header']} key={v['key']}>
-                      <Descriptions bordered>
-                        <Descriptions.Item label="编号">
-                          {v['id']}
-                        </Descriptions.Item>
-                        <Descriptions.Item label="位置" span={20}>
-                          {v['position']}
-                        </Descriptions.Item>
-                        <Descriptions.Item label="状态">
-                          <Badge
-                            status={v['status'][1]}
-                            text={v['status'][0]}
-                          />
-                        </Descriptions.Item>
-                        <Descriptions.Item label="电量" span={20}>
-                          {v['battery']}
-                        </Descriptions.Item>
-                        <Descriptions.Item label="待结束任务">
-                          {v['ma']}
-                        </Descriptions.Item>
-                        <Descriptions.Item label="待开始任务" span={20}>
-                          {v['mb']}
-                        </Descriptions.Item>
-                        <Descriptions.Item label="动作序列" span={20}>
-                          {v['list']}
-                        </Descriptions.Item>
-                        <Descriptions.Item label="当前任务数">
-                          {v['load']}
-                        </Descriptions.Item>
-                        <Descriptions.Item label="预计完成代价">
-                          {v['cost']}
-                        </Descriptions.Item>
-                      </Descriptions>
-                    </Panel>
-                  ))}
-                </Collapse>
-              </Panel>
-              <Panel header="任务信息管理" key="1">
-                <Collapse defaultActiveKey={['0']}>
-                  {this.props.mInfo.map((v) => (
-                    <Panel header={v['header']} key={v['key']}>
-                      <Descriptions bordered>
-                        <Descriptions.Item label="编号">
-                          {v['id']}
-                        </Descriptions.Item>
-                        <Descriptions.Item label="任务描述" span={20}>
-                          {v['des']}
-                        </Descriptions.Item>
-                        <Descriptions.Item label="状态">
-                          <Badge
-                            status={v['status'][1]}
-                            text={v['status'][0]}
-                          />
-                        </Descriptions.Item>
-                      </Descriptions>
-                    </Panel>
-                  ))}
-                </Collapse>
-              </Panel>
-            </Collapse>
+          <div className="my_input">
+            <Form
+              name="input_form"
+              {...formItemLayout}
+              onFinish={onSave}
+              autoComplete="off"
+            >
+              <span className="ant-form-text">Algorithm profile</span>
+              <Form.Item
+                name="select"
+                label="select"
+                hasFeedback
+                rules={[
+                  { required: true, message: 'missing optimization objective' },
+                ]}
+              >
+                <Select placeholder="Select the optimization objective">
+                  <Option value="minimize the total waiting time">
+                    minimize the total waiting time
+                  </Option>
+                </Select>
+              </Form.Item>
+              <Form.Item
+                name="switch"
+                label="intelAlgo"
+                valuePropName="checked"
+              >
+                <Switch />
+              </Form.Item>
+              <Form.Item name="slider" label="numOfFlights">
+                <Slider
+                  min={4}
+                  max={12}
+                  marks={{
+                    4: '4',
+                    8: '8',
+                    12: '12',
+                  }}
+                />
+              </Form.Item>
+              <Form.Item label="dragger">
+                <Form.Item
+                  name="dragger"
+                  valuePropName="fileList"
+                  getValueFromEvent={uploadChange}
+                  noStyle
+                >
+                  <Upload.Dragger
+                    name={'file'}
+                    multiple={true}
+                    action={'http://localhost:7000/dev/'}
+                  >
+                    <p className="ant-upload-drag-icon">
+                      <InboxOutlined />
+                    </p>
+                    <p className="ant-upload-text">
+                      Click or drag file to this area to upload
+                    </p>
+                    <p className="ant-upload-hint">
+                      The missions' description file
+                    </p>
+                  </Upload.Dragger>
+                </Form.Item>
+              </Form.Item>
+              <Form.Item wrapperCol={{ span: 12, offset: 6 }}>
+                <Button type="ghost" htmlType="submit">
+                  Save
+                </Button>
+              </Form.Item>
+            </Form>
           </div>
-          <div className="my_control">
+          <div className="my_display">
             <div className="my_start">
-              <Button type="primary" htmlType="button">
+              <Button
+                type="primary"
+                htmlType="button"
+                size="large"
+                disabled={this.state.button_disabled}
+                block
+              >
                 <a
-                  onClick={(_) => {
-                    clearInterval(this.timer)
-                    this.timer = setInterval(() => {
-                      this.props.query_from_host()
-                    }, 100)
+                  onClick={() => {
+                    this.props.plan()
                   }}
                 >
-                  start
+                  Plan
                 </a>
               </Button>
             </div>
             <div className="my_interact">
               <div style={{ position: 'relative', left: '10%', width: '80%' }}>
                 <Tabs defaultActiveKey="0" style={{ textAlign: 'center' }}>
-                  <TabPane tab="无人集群个体动作配置" key="0">
-                    <Form
-                      name="dynamic_flights"
-                      onFinish={onChangeFlight}
-                      autoComplete="off"
+                  <TabPane tab="无人集群个体动作信息" key="0">
+                    <Table
+                      dataSource={this.props.ftInfo}
+                      rowSelection={rowSelection}
                     >
-                      <Form.List name="flights">
-                        {(fields, { add, remove }) => (
-                          <>
-                            {fields.map((field) => (
-                              <Space
-                                key={field.key}
-                                style={{ display: 'flex', marginBottom: 8 }}
-                                align="baseline"
-                              >
-                                <Form.Item
-                                  {...field}
-                                  name={[field.name, 'flight_id']}
-                                  fieldKey={[field.fieldKey, 'flight_id']}
-                                  rules={[
-                                    {
-                                      required: true,
-                                      message: 'Missing flight id',
-                                    },
-                                  ]}
-                                >
-                                  <Select placeholder="flight id" allowClear>
-                                    {this.props.fInfo.map((f) => (
-                                      <Option value={f['id']}>{f['id']}</Option>
-                                    ))}
-                                  </Select>
-                                </Form.Item>
-                                <Form.Item
-                                  {...field}
-                                  name={[field.name, 'point_id']}
-                                  fieldKey={[field.fieldKey, 'point_id']}
-                                  rules={[
-                                    {
-                                      required: true,
-                                      message: 'Missing point id',
-                                    },
-                                  ]}
-                                >
-                                  <Input placeholder="point id" />
-                                </Form.Item>
-                                <Form.Item
-                                  {...field}
-                                  name={[field.name, 'action']}
-                                  fieldKey={[field.fieldKey, 'action']}
-                                  rules={[
-                                    {
-                                      required: true,
-                                      message: 'Missing action',
-                                    },
-                                  ]}
-                                >
-                                  <Input placeholder="action" />
-                                </Form.Item>
-                                <MinusCircleOutlined
-                                  onClick={() => remove(field.name)}
-                                />
-                              </Space>
-                            ))}
-                            <Form.Item>
-                              <Button
-                                type="dashed"
-                                onClick={() => add()}
-                                block
-                                icon={<PlusOutlined />}
-                              >
-                                添加无人机动作配置
-                              </Button>
-                            </Form.Item>
-                          </>
-                        )}
-                      </Form.List>
-                      <Form.Item>
-                        <Button type="ghost" htmlType="submit">
-                          Submit
-                        </Button>
-                      </Form.Item>
-                    </Form>
+                      <Column title="编号" dataIndex="id" fixed="left" />
+                      <Column title="动作序列" dataIndex="list" />
+                    </Table>
                   </TabPane>
-                  <TabPane tab="任务调整" key="1">
-                    <Form
-                      name="dynamic_missions"
-                      onFinish={onChangeMission}
-                      autoComplete="off"
-                    >
-                      <Form.List name="missions">
-                        {(fields, { add, remove }) => (
-                          <>
-                            {fields.map((field) => (
-                              <Space
-                                key={field.key}
-                                style={{ display: 'flex', marginBottom: 8 }}
-                                align="baseline"
-                              >
-                                <Form.Item
-                                  {...field}
-                                  name={[field.name, 'mission_id']}
-                                  fieldKey={[field.fieldKey, 'mission_id']}
-                                  rules={[
-                                    {
-                                      required: true,
-                                      message: 'Missing mission id',
-                                    },
-                                  ]}
-                                >
-                                  <Select placeholder="mission id" allowClear>
-                                    {this.props.mInfo.map((m) => (
-                                      <Option value={m['id']}>{m['id']}</Option>
-                                    ))}
-                                  </Select>
-                                </Form.Item>
-                                <Form.Item
-                                  {...field}
-                                  name={[field.name, 'action']}
-                                  fieldKey={[field.fieldKey, 'action']}
-                                  rules={[
-                                    {
-                                      required: true,
-                                      message: 'Missing action',
-                                    },
-                                  ]}
-                                >
-                                  <Input placeholder="action" />
-                                </Form.Item>
-                                <Form.Item
-                                  {...field}
-                                  name={[field.name, 'from_id']}
-                                  fieldKey={[field.fieldKey, 'from_id']}
-                                >
-                                  <Input placeholder="from" />
-                                </Form.Item>
-                                <Form.Item
-                                  {...field}
-                                  name={[field.name, 'to_id']}
-                                  fieldKey={[field.fieldKey, 'to_id']}
-                                >
-                                  <Input placeholder="to" />
-                                </Form.Item>
-                                <MinusCircleOutlined
-                                  onClick={() => remove(field.name)}
-                                />
-                              </Space>
-                            ))}
-                            <Form.Item>
-                              <Button
-                                type="dashed"
-                                onClick={() => add()}
-                                block
-                                icon={<PlusOutlined />}
-                              >
-                                添加任务调整
-                              </Button>
-                            </Form.Item>
-                          </>
-                        )}
-                      </Form.List>
-                      <Form.Item>
-                        <Button type="ghost" htmlType="submit">
-                          Submit
-                        </Button>
-                      </Form.Item>
-                    </Form>
+                  <TabPane tab="无人集群个体任务信息" key="1">
+                    <Table dataSource={this.props.fmInfo}>
+                      <Column title="编号" dataIndex="id" />
+                      <Column title="执行任务" dataIndex="mission" />
+                      <Column title="代价" dataIndex="cost" />
+                    </Table>
                   </TabPane>
                 </Tabs>
               </div>

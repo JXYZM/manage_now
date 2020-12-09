@@ -1,6 +1,6 @@
 import request from '../utils/request'
 
-export async function queryFromHost(params) {
+export async function myPost(params) {
   //debugger
   //const reqHeader = getAuthRequestHeader()
   return request('/dev/', {
@@ -9,39 +9,6 @@ export async function queryFromHost(params) {
     // headers: {
     //   hi: "hello"
     // },
-    body: JSON.stringify(params)
+    body: JSON.stringify(params),
   })
 }
-
-export async function postChangeFlight(params) {
-  //debugger
-  //const reqHeader = getAuthRequestHeader()
-  return request('/dev/', {
-    method: 'POST',
-    // timeout: 180000,
-    // headers: {
-    //   hi: "hello"
-    // },
-    body: JSON.stringify(params)
-  })
-}
-
-export async function postChangeMission(params) {
-  //debugger
-  //const reqHeader = getAuthRequestHeader()
-  return request('/dev/', {
-    method: 'POST',
-    // timeout: 180000,
-    // headers: {
-    //   hi: "hello"
-    // },
-    body: JSON.stringify(params)
-  })
-}
-
-// export async function getTheRoute() {
-//   //const reqHeader = getAuthRequestHeader()
-//   return request('/dev/',{
-//     method: 'GET',
-//   });
-// }
