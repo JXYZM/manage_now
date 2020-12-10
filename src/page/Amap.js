@@ -280,29 +280,25 @@ export default class Amap extends Component {
               onFinish={onSave}
               autoComplete="off"
             >
-              <span className="ant-form-text">Algorithm profile</span>
+              <span className="ant-form-text">算法配置页</span>
               <Form.Item
                 name="select"
-                label="select"
+                label="选择"
                 hasFeedback
-                rules={[
-                  { required: true, message: 'missing optimization objective' },
-                ]}
+                rules={[{ required: true, message: '缺少优化目标' }]}
               >
-                <Select placeholder="Select the optimization objective">
-                  <Option value="minimize the total waiting time">
-                    minimize the total waiting time
-                  </Option>
+                <Select placeholder="选择优化目标">
+                  <Option value="最小化总等待时间">最小化总等待时间</Option>
                 </Select>
               </Form.Item>
               <Form.Item
                 name="switch"
-                label="intelAlgo"
+                label="智能规划算法"
                 valuePropName="checked"
               >
                 <Switch />
               </Form.Item>
-              <Form.Item name="slider" label="numOfFlights">
+              <Form.Item name="slider" label="无人机数目">
                 <Slider
                   min={4}
                   max={12}
@@ -313,7 +309,7 @@ export default class Amap extends Component {
                   }}
                 />
               </Form.Item>
-              <Form.Item label="dragger">
+              <Form.Item label="上传">
                 <Form.Item
                   name="dragger"
                   valuePropName="fileList"
@@ -328,12 +324,8 @@ export default class Amap extends Component {
                     <p className="ant-upload-drag-icon">
                       <InboxOutlined />
                     </p>
-                    <p className="ant-upload-text">
-                      Click or drag file to this area to upload
-                    </p>
-                    <p className="ant-upload-hint">
-                      The missions' description file
-                    </p>
+                    <p className="ant-upload-text">双击或拖拽文件以上传</p>
+                    <p className="ant-upload-hint">支持任务描述文件</p>
                   </Upload.Dragger>
                 </Form.Item>
               </Form.Item>
