@@ -1,3 +1,7 @@
+/*
+Amap.js
+主界面
+*/
 import React, { Component } from 'react'
 import { Map, MouseTool, Marker, Polyline } from 'react-amap'
 import { connect } from 'dva'
@@ -171,6 +175,7 @@ export default class Amap extends Component {
       temp_path = temp_path.concat({ route: temptemp, key: count_out })
       count_out += 1
     }
+    console.log(temp_path)
     return [temp, temp_path]
   }
 
@@ -360,7 +365,7 @@ export default class Amap extends Component {
                   <TabPane tab="无人集群个体动作信息" key="0">
                     <Table
                       dataSource={this.props.ftInfo}
-                      rowSelection={rowSelection}
+                      //rowSelection={rowSelection}
                     >
                       <Column title="编号" dataIndex="id" fixed="left" />
                       <Column title="动作序列" dataIndex="list" />

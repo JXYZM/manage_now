@@ -1,3 +1,7 @@
+/*
+method.js
+post 定义
+*/
 import request from '../utils/request'
 
 export async function myPost(params) {
